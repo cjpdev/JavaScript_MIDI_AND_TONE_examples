@@ -6,3 +6,5 @@ Example of used Midi.js and Tone.js to create download midi files and play them 
 Uses a very simple solution to playback the MIDI. So what ever MIDI 
 is construct should playback with Tone.js. The Tone MIDI parse is used to
 import the binary MIDI data for playback.
+
+- The created MIDI files can also be downlaoded.
