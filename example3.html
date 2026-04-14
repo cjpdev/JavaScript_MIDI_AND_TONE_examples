@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Chay Palton MIDI</title>
+    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
+    <script src="https://unpkg.com/@tonejs/midi"></script>
+    <script src="chay_helper.js"></script>
+</head>
+
+<body>
+    <h1>MIDI.JS and TONE.JS</h1>
+
+    <p>
+        Example using Control Types, with multi track MIDI file
+    </p>
+
+    <button id="play">Play MIDI</button> <button id="download">Download MIDI</button>
+
+    <script>
+
+            var mididata = null;
+            
+            function BuildMusic() {
+
+                // Use MIDI.js to build the MIDI data
+
+                const midi = new Midi();
+
+                // Track 1
+                const track1 = midi.addTrack();
+
+                // I used TONE.js to convert music notation to Midi values
+
+                track1.addNote({ midi: Tone.Frequency("C").toMidi(), time: 0, duration: 0.5 });
+
+                // Control Types
+
+                /*
+                    1: "modulationWheel",
+                    2: "breath",
+                    4: "footController",
+                    5: "portamentoTime",
+                    7: "volume",
+                    8: "balance",
+                    10: "pan",
+                    64: "sustain",
+                    65: "portamentoTime",
+                    66: "sostenuto",
+                    67: "softPedal",
+                    68: "legatoFootswitch",
+                    84: "portamentoControl"
+                */
+
+                // Add a control
+
+                track1.addCC({ number: 1, value: 64, time: 0.2 });
+
+                // Track 2
+
+                const track2 = midi.addTrack();
+                track2.addNote({ midi: Tone.Frequency("C").toMidi(), time: 0, duration: 0.5 });
+
+                // Add a control
+                
+                track2.addCC({ number: 64, value: 127, time: 0.1 });
+
+                // Melody
+
+                const melody = midi.addTrack();
+                const baseTime = 0;
+
+                // Example notes list
+
+                const notes = [
+                    { note: "C4", time: baseTime + 0.0, duration: 0.3 },
+                    { note: "D4", time: baseTime + 0.4, duration: 0.3 },
+                    { note: "E4", time: baseTime + 0.8, duration: 0.3 },
+                    { note: "F4", time: baseTime + 1.2, duration: 0.3 },
+                    { note: "G4", time: baseTime + 1.6, duration: 0.3 },
+                    { note: "A4", time: baseTime + 2.0, duration: 0.3 },
+                    { note: "B4", time: baseTime + 2.4, duration: 0.3 },
+                    { note: "C5", time: baseTime + 2.8, duration: 0.6 },
+                ];
+
+                notes.forEach(n => {
+                    melody.addNote({ midi: Tone.Frequency(n.note).toMidi(), time: n.time, duration: n.duration });
+                });
+
+                // Example add some individual notes
+
+                melody.addNote({ midi: Tone.Frequency("C").toMidi(), time: baseTime + 3.2, duration: 0.2 });
+                melody.addNote({ midi: Tone.Frequency("E").toMidi(), time: baseTime + 3.4, duration: 0.2 });
+                melody.addNote({ midi: Tone.Frequency("G").toMidi(), time: baseTime + 3.6, duration: 0.2 });
+
+                // What ever happen before this point is now converted into the actual MIDI data file.
+
+                const midiData = midi.toArray();
+
+                // Keep thinks simple and create an instance of MIDI, but use the MIDI data we just built.
+                return midiData
+            
+            }
+
+            document.getElementById('play').addEventListener('click', () => { 
+                mididata = BuildMusic()
+                chay_helper_play(mididata)
+            });
+            
+            document.getElementById('download').addEventListener('click', () => { 
+                mididata = BuildMusic()
+                chay_helper_play(mididata)
+                chay_helper_download(mididata)
+            });
+
+    </script>
+</body>
+
+</html>
